@@ -2,7 +2,7 @@ import HomeClient from '@/components/HomeClient';
 import { DICT } from '@/lib/i18n';
 
 const zh = DICT.zh;
-const SITE_URL = process.env.SITE_URL || 'http://localhost:3000';
+const SITE_URL = process.env.SITE_URL || 'https://www.vidsavenow.com';
 
 export const metadata = {
   title: 'VidSaveNow - TikTok 视频在线下载工具（高清 MP4）',

@@ -1,6 +1,7 @@
+import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 
-const SITE_URL = process.env.SITE_URL || 'http://localhost:3000';
+const SITE_URL = process.env.SITE_URL || 'https://www.vidsavenow.com';
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
@@ -50,6 +51,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         {children}
+        <Analytics />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
