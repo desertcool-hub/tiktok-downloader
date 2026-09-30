@@ -6,11 +6,15 @@ import { fetchAllowedMedia } from '@/lib/media-fetch.mjs';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
+/** 云端转发模式：设置 BACKEND_URL 后下载流由家庭/VPS 后端回源（住宅 IP），本实例只透传 */
+const BACKEND = process.env.BACKEND_URL;
+
 const UA = DOWNLOAD_HEADERS['User-Agent'];
 
 function extFromType(ct) {
   if (!ct) return '';
   if (ct.includes('mp4')) return '.mp4';
+  if (ct.includes('mpeg') || ct.includes('mp3')) return '.mp3';
   if (ct.includes('jpeg')) return '.jpg';
   if (ct.includes('png')) return '.png';
   if (ct.includes('webp')) return '.webp';
@@ -51,6 +55,31 @@ export async function GET(req) {
   }
 
   const range = req.headers.get('range') || undefined;
+
+  if (BACKEND) {
+    try {
+      const r = await fetch(`${BACKEND}/api/download?${searchParams.toString()}`, {
+        headers: range ? { Range: range } : {},
+        cache: 'no-store',
+      });
+      const headers = new Headers();
+      for (const k of [
+        'content-type',
+        'content-length',
+        'content-range',
+        'content-disposition',
+        'accept-ranges',
+      ]) {
+        const v = r.headers.get(k);
+        if (v) headers.set(k, v);
+      }
+      headers.set('Cache-Control', 'no-store');
+      return new NextResponse(r.body, { status: r.status, headers });
+    } catch (e) {
+      console.error('[download] backend forward failed:', e?.message);
+      return new NextResponse('后端不可达，请稍后重试', { status: 502 });
+    }
+  }
 
   // 不同 CDN 域对请求头要求不同，依次尝试多组请求头
   const UA_COMBOS = [

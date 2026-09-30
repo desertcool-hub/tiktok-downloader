@@ -5,6 +5,13 @@ import { rateLimit, clientIp } from '@/lib/ratelimit';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
+/**
+ * 云端转发模式：设置 BACKEND_URL 后，本实例只做接入层（限流/校验），
+ * 解析请求转发到家庭/VPS 后端（住宅 IP 出口，不会被 TikTok 反爬拦截）。
+ * 未设置时本实例自行解析（本地开发模式）。
+ */
+const BACKEND = process.env.BACKEND_URL;
+
 /** POST /api/parse  body: { url: "https://www.tiktok.com/@xxx/video/123" } */
 export async function POST(req) {
   // 限流：单 IP 每分钟 15 次
@@ -36,6 +43,19 @@ export async function POST(req) {
   }
 
   try {
+    if (BACKEND) {
+      const r = await fetch(`${BACKEND}/api/parse`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        cache: 'no-store',
+      });
+      const j = await r.json().catch(() => null);
+      return NextResponse.json(
+        j ?? { success: false, error: '后端不可达，请稍后重试' },
+        { status: r.status }
+      );
+    }
     const { result, errors } = await parseTikTok(url);
     if (!result) {
       console.error('[parse] all providers failed:', JSON.stringify(errors));

@@ -32,6 +32,26 @@ npm run start
 > HTTPS_PROXY=http://127.0.0.1:7897 HTTP_PROXY=http://127.0.0.1:7897 npm run start
 > ```
 
+## 部署架构（当前：家庭后端 + QW Pages 前端）
+
+TikTok 与 TikWM 的反爬会拦截数据中心出口 IP（QW Pages / Vercel 等云端运行时解析与回源全部 403），
+因此采用前后端分离：
+
+```
+用户浏览器
+   ↓
+QW Pages 前端（standalone 构建，构建期烘入 BACKEND_URL / SITE_URL）
+   ↓ /api/parse、/api/download 原样转发
+cloudflared 隧道（trycloudflare.com 临时域名）
+   ↓
+家庭 Mac 后端（localhost:3000，住宅 IP 出口，自行解析与回源）
+```
+
+- 同一份代码两种角色：设 `BACKEND_URL` = 接入层（只限流/校验/转发）；不设 = 后端（真解析）。
+- 隧道运维：`bash scripts/tunnel.sh` 重启并打印新地址；**quick tunnel 地址每次重启都变**，
+  变更后需重烘发布副本并重发（脚本头部有命令）。终态是自有域名 + cloudflared 命名隧道。
+- 家庭 Mac 关机/休眠 = 公网站解析不可用；正式运营请迁海外 VPS 作后端。
+
 ## 部署（Vercel）
 
 1. 把项目推到 GitHub 仓库
