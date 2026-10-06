@@ -1,5 +1,5 @@
 import { Analytics } from '@vercel/analytics/next';
-import './globals.css';
+import '../globals.css';
 
 const SITE_URL = process.env.SITE_URL || 'https://www.vidsavenow.com';
 
@@ -46,7 +46,7 @@ const siteJsonLd = {
     'Free online TikTok video downloader: save HD MP4 without login or watermark.',
 };
 
-export default function RootLayout({ children }) {
+export default function EnRootLayout({ children }) {
   return (
     <html lang="en">
       <body>

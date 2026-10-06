@@ -1,0 +1,62 @@
+import { Analytics } from '@vercel/analytics/next';
+import '../globals.css';
+
+const SITE_URL = process.env.SITE_URL || 'https://www.vidsavenow.com';
+
+export const metadata = {
+  metadataBase: new URL(SITE_URL),
+  title: 'VidSaveNow - TikTok 视频在线下载工具',
+  description:
+    'VidSaveNow 是免费的 TikTok 视频在线下载工具：粘贴 TikTok 链接即可保存高清 MP4，无需登录、无需安装、支持分享短链。',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
+  },
+  formatDetection: { email: false, address: false, telephone: false },
+  openGraph: {
+    siteName: 'VidSaveNow',
+    type: 'website',
+    images: [
+      { url: '/og.png', width: 1200, height: 630, alt: 'VidSaveNow - TikTok 视频在线下载工具' },
+    ],
+  },
+  twitter: { card: 'summary_large_image', images: ['/og.png'] },
+};
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#06070c',
+};
+
+const siteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'VidSaveNow',
+  url: SITE_URL,
+  inLanguage: ['en', 'zh-CN'],
+  description:
+    '免费在线 TikTok 视频下载工具：粘贴链接即可保存高清 MP4，无需登录、无水印。',
+};
+
+export default function ZhRootLayout({ children }) {
+  return (
+    <html lang="zh-CN">
+      <body>
+        {children}
+        <Analytics />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
+        />
+      </body>
+    </html>
+  );
+}

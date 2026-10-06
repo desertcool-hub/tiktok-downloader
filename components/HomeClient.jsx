@@ -40,9 +40,7 @@ function cleanTitle(text, max = 50) {
     .trim();
 }
 
-const SAMPLE_URL = 'https://www.tiktok.com/@khaby.lame/video/6999284772195421445';
-
-const WHY_ICONS = ['∞', '◌', '♪', 'HD', '∅', '▣'];
+const WHY_ICONS = ['◌', 'HD', '∞', '∅'];
 
 const HOWTO_ICONS = [
   <svg key="a" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.5" /><path d="M11 18.5h2" /></svg>,
@@ -300,15 +298,6 @@ export default function HomeClient({ locale = 'en' }) {
 
               <div className="input-tools">
                 <span>{t.hero.trust}</span>
-                <button
-                  className="link-btn"
-                  onClick={() => {
-                    setUrl(SAMPLE_URL);
-                    setPhase('idle');
-                  }}
-                >
-                  {t.hero.sample}
-                </button>
               </div>
 
               {phase === 'loading' && (
@@ -362,30 +351,53 @@ export default function HomeClient({ locale = 'en' }) {
                     </div>
                   </div>
 
-                  <div className="formats">
-                    <div className="formats-head">{t.result.formatsHead}</div>
-                    {video.formats.map((f, i) => (
-                      <div className="format-row" key={i}>
-                        <span className={`format-icon ${f.type}`}>
-                          MP4
-                        </span>
-                        <span className="label">
-                          {t.formats[f.kind] || f.label}
-                          <span className="hint">
-                            {`${t.result.saveAs} ${fileNameBase().slice(0, 28) || 'video'}.mp4`}
-                          </span>
-                        </span>
-                        <a
-                          className="btn-dl"
-                          href={mediaUrl(f)}
-                          download={`${fileNameBase()}.mp4`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          ⬇ {t.result.dl}
-                        </a>
-                      </div>
-                    ))}
+                  <div className="cta-panel">
+                    {(() => {
+                      const fmts = video.formats || [];
+                      const hd = fmts.find((f) => f.kind === 'hd_nowm');
+                      const sd = fmts.find((f) => f.kind === 'nowm');
+                      const raw = fmts.find((f) => f.kind === 'raw');
+                      const primary = hd || sd || raw || fmts[0];
+                      const secondary =
+                        primary && primary === hd
+                          ? sd || raw
+                          : primary && primary === sd
+                          ? raw
+                          : null;
+                      const base = fileNameBase();
+                      return (
+                        <>
+                          {primary && (
+                            <a
+                              className="cta cta-primary"
+                              href={mediaUrl(primary)}
+                              download={`${base}.mp4`}
+                              rel="noopener noreferrer"
+                            >
+                              <span className="cta-ico" aria-hidden="true">⬇</span>
+                              <span className="cta-copy">
+                                <span className="cta-label">{t.result.primaryCta}</span>
+                                <span className="cta-sub">{t.result.primarySub}</span>
+                              </span>
+                            </a>
+                          )}
+                          {secondary && (
+                            <a
+                              className="cta cta-secondary"
+                              href={mediaUrl(secondary)}
+                              download={`${base}.mp4`}
+                              rel="noopener noreferrer"
+                            >
+                              <span className="cta-ico" aria-hidden="true">⬇</span>
+                              <span className="cta-copy">
+                                <span className="cta-label">{t.result.secondaryCta}</span>
+                                <span className="cta-sub">{t.result.secondarySub}</span>
+                              </span>
+                            </a>
+                          )}
+                        </>
+                      );
+                    })()}
                   </div>
                 </div>
               )}
