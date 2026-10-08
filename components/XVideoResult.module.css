@@ -1,0 +1,9 @@
+.copy { display: inline-flex; align-items: center; gap: 7px; }
+.disabled { opacity: 0.5; cursor: wait; }
+.more { color: var(--text-2); text-align: left; font-size: 13px; }
+.more summary { cursor: pointer; padding: 8px 0; }
+.options { display: grid; gap: 12px; margin-top: 8px; }
+.progress { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; font-size: 12px; text-align: left; }
+.progress progress { flex: 1; min-width: 100px; accent-color: var(--cyan); }
+.saved { color: var(--ok); font-size: 13px; text-align: left; }
+.error { color: var(--bad); font-size: 13px; text-align: left; overflow-wrap: anywhere; }

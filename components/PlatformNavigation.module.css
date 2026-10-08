@@ -1,0 +1,14 @@
+.platforms { display: flex; align-items: center; gap: 24px; }
+.platforms a[aria-current="page"] { color: var(--text); }
+.nav .links .platforms a { display: block; white-space: nowrap; }
+.nav .links { gap: 24px; }
+.language { flex-shrink: 0; }
+@media (max-width: 860px) {
+  .nav .sectionLink { display: none; }
+}
+@media (max-width: 620px) {
+  .nav :global(.nav-inner) { flex-wrap: wrap; height: auto; padding-top: 12px; padding-bottom: 10px; row-gap: 12px; }
+  .nav .links { width: 100%; min-width: 0; justify-content: space-between; gap: 8px; }
+  .platforms { flex: 1; gap: 4px; min-width: 0; overflow-x: auto; }
+  .nav .platforms a { flex-shrink: 0; font-size: 13px; padding: 7px 6px; }
+}

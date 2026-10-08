@@ -1,0 +1,9 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/youtube.py": {
+      "maxDuration": 300,
+      "excludeFiles": "{node_modules/**,.next/**,.git/**,.gstack/**,test/**,docs/**,public/**}"
+    }
+  }
+}

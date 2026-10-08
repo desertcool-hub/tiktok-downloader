@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { DICT } from '@/lib/i18n';
+import PlatformNavigation from './PlatformNavigation';
 
 /* ---------- 工具函数 ---------- */
 
@@ -213,37 +214,7 @@ export default function HomeClient({ locale = 'en' }) {
       <ScrollProgress />
 
       {/* 顶部导航 */}
-      <nav className="nav">
-        <div className="nav-inner">
-          <a className="brand" href="#top">
-            <span className="brand-mark">
-              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path
-                  d="M12 3v12.2a3.3 3.3 0 1 1-2.6-3.24"
-                  stroke="#fff"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M12 3c.5 2.5 2.2 4.1 4.9 4.5"
-                  stroke="#fff"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </span>
-            VidSaveNow
-          </a>
-          <div className="nav-links">
-            <a href="#downloader">{t.nav.downloader}</a>
-            <a href="#howto">{t.nav.howto}</a>
-            <a href="#faq">{t.nav.faq}</a>
-            <a className="lang" href={t.altLocale.href}>
-              {t.altLocale.label}
-            </a>
-          </div>
-        </div>
-      </nav>
+      <PlatformNavigation platform="tiktok" locale={locale} t={t} />
 
       <main id="top">
         {/* Hero：只做转化 */}

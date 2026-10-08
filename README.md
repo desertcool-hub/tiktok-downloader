@@ -14,6 +14,14 @@
 
 ## 本地运行
 
+新增微信视频号 `/weixin` 与 X / Twitter `/x` 下载页。视频号支持带密钥下载、
+JSON 记录导入及本地文件解密；X 支持公开帖子、多视频与清晰度选择。
+部署选项、分享链接限制和测试说明见 [下载平台说明](docs/download-platforms.md)。
+
+新增 YouTube 下载页 `/youtube`（中文）与 `/youtube/en`（英文），复用相同交互与 SEO。
+纯 Vercel 试运行使用 yt-dlp、Deno 与 FFmpeg，仅支持 4 MiB 以内的带声音 MP4。
+需要额外安装 Python 依赖并配置服务端签名密钥，详见 [YouTube 部署说明](docs/youtube-vercel.md)。
+
 ```bash
 npm install
 npm run dev        # 开发模式，http://localhost:3000

@@ -4,16 +4,20 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:youtube": "node scripts/dev-youtube.mjs",
     "build": "next build",
     "start": "next start",
     "test": "node --test",
+    "test:youtube": "python3 test/youtube_python_test.py",
     "lint": "next lint"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
+    "lucide-react": "^1.53.0",
     "next": "^14.2.35",
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "react-tweet": "^3.3.1"
   },
   "devDependencies": {
     "eslint": "^8.57.1",

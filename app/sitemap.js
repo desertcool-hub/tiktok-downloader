@@ -28,5 +28,44 @@ export default function sitemap() {
         },
       },
     },
+    {
+      url: `${SITE_URL}/weixin`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+      alternates: {
+        languages: {
+          'zh-CN': `${SITE_URL}/weixin`,
+        },
+      },
+    },
+    {
+      url: `${SITE_URL}/x`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+      alternates: { languages: { en: `${SITE_URL}/x/en`, 'zh-CN': `${SITE_URL}/x` } },
+    },
+    {
+      url: `${SITE_URL}/x/en`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+      alternates: { languages: { en: `${SITE_URL}/x/en`, 'zh-CN': `${SITE_URL}/x` } },
+    },
+    {
+      url: `${SITE_URL}/youtube`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+      alternates: { languages: { en: `${SITE_URL}/youtube/en`, 'zh-CN': `${SITE_URL}/youtube` } },
+    },
+    {
+      url: `${SITE_URL}/youtube/en`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+      alternates: { languages: { en: `${SITE_URL}/youtube/en`, 'zh-CN': `${SITE_URL}/youtube` } },
+    },
   ];
 }
