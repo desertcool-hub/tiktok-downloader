@@ -3,7 +3,7 @@
   "functions": {
     "api/youtube.py": {
       "maxDuration": 300,
-      "excludeFiles": "{app/**,components/**,lib/**,public/**,docs/**,test/**,scripts/**,vendor/**,node_modules/**,.next/**,.git/**,.gstack/**,.venv/**,out/**,build/**,**/__pycache__/**,**/*.egg-info/**,.env*,*.md,server.js,next.config.mjs,jsconfig.json,package*.json,.eslintrc*,.gitignore,.vercelignore,.python-version,requirements.txt,vercel.json,.DS_Store}"
+      "excludeFiles": "{app/**,components/**,lib/**,public/**,docs/**,test/**,scripts/**,vendor/**,node_modules/**,.next/**,.git/**,.gstack/**,.venv/**,out/**,build/**,**/__pycache__/**,**/*.egg-info/**,*.*}"
     }
   }
 }

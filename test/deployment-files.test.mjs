@@ -6,6 +6,14 @@ import { createRequire } from 'node:module';
 const match = createRequire(import.meta.url)('minimatch');
 const options = { dot: true };
 
+test('Function exclusion rules fit the Vercel schema limit', async () => {
+  const config = JSON.parse(await readFile('vercel.json', 'utf8'));
+  for (const [name, fn] of Object.entries(config.functions)) {
+    assert.equal(typeof fn.excludeFiles, 'string', name);
+    assert.ok(fn.excludeFiles.length <= 256, `${name}: excludeFiles is ${fn.excludeFiles.length} characters (maximum 256)`);
+  }
+});
+
 test('Python function excludes project sources and generated duplicate binaries but retains its handler and installed runtime', async () => {
   const config = JSON.parse(await readFile('vercel.json', 'utf8'));
   const pattern = config.functions['api/youtube.py'].excludeFiles;
@@ -14,7 +22,8 @@ test('Python function excludes project sources and generated duplicate binaries 
     'vendor/vidsavenow-youtube-runtime/setup.py',
     'vendor/vidsavenow-youtube-runtime/build/lib/vidsavenow_runtime/deno',
     'vendor/vidsavenow-youtube-runtime/vidsavenow_youtube_runtime.egg-info/PKG-INFO',
-    'node_modules/next/index.js', '.next/server/app/youtube.html', '.venv/bin/python', '.env.local', 'README.md']) {
+    'node_modules/next/index.js', '.next/server/app/youtube.html', '.venv/bin/python', '.env.local', 'README.md',
+    'package.json', 'next.config.mjs', 'requirements.txt', 'vercel.json']) {
     assert.equal(match(file, pattern, options), true, `Unnecessary Python bundle file: ${file}`);
   }
   for (const file of ['api/youtube.py', '_vendor/vidsavenow_runtime/deno', '_vendor/vidsavenow_runtime/LICENSE-DENO',
