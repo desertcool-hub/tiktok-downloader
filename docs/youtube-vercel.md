@@ -26,6 +26,25 @@ No personal YouTube cookies, browser credentials or login tokens are requested.
 Signing secrets stay on the server. Download tokens expire after 15 minutes and
 contain only the video ID, allowed format selector and expiration, never a CDN URL.
 
+## Deployment File Scope
+
+- `.vercelignore` omits tests, docs, local preview scripts, environments, caches and
+  generated package artifacts from CLI uploads. Git deployments may still check out these
+  files; the function-level exclusions below control the Python runtime bundle either way.
+  Next.js source, public assets, lockfiles,
+  configuration and the local Python package source remain available for building.
+- The Python function's `excludeFiles` separately omits frontend source and the entire
+  project `vendor/` directory **after dependency installation**. The package build creates
+  a duplicate Deno executable under `vendor/.../build/`; Git ignores do not remove it
+  from a function built on Vercel. It must not enter the runtime bundle.
+- Installed runtime dependencies under Vercel's `_vendor/` remain intact, including
+  yt-dlp, EJS, Deno, FFmpeg and their licenses. Do not exclude `_vendor/`.
+- The pinned Linux x86_64 Deno and FFmpeg wheels contain approximately 91.4 MiB and
+  76.2 MiB uncompressed. Removing duplicate build files avoids paying for Deno twice.
+  A clean Linux dependency installation plus Deno measures 192.2 MiB before Vercel's
+  runtime overhead. These measurements are not a confirmed cloud deployment size.
+- Redeploy the updated commit without the existing build cache after a size-limit failure.
+
 ## Trial Limits
 
 - MP4 with video and audio only; adaptive H.264 + M4A sources are merged with FFmpeg.
@@ -83,7 +102,7 @@ no Electron code, account cookies or desktop filesystem access is copied into th
   video and AAC audio, duration 19.06 seconds.
 - The same file downloaded through the Next.js webpage using the Python handler;
   paste, Enter, loading states, cover, copy and download interactions passed.
-- 44 Node tests and 11 Python tests passed, including dependency-path propagation,
+- 46 Node tests and 11 Python tests passed, including deployment-file scope, dependency-path propagation,
   missing runtime detection, merge-file rename monitoring and development proxy timing.
 - This is a real upstream/local test, not a Vercel egress test.
 - The local Vercel CLI authentication token is invalid; no cloud preview has been

@@ -1,0 +1,20 @@
+# Keep build inputs and public assets; omit local-only files from deployment uploads.
+.git/**
+.gstack/**
+.vercel/**
+.venv/**
+node_modules/**
+.next/**
+out/**
+build/**
+docs/**
+test/**
+scripts/**
+.env*
+README.md
+**/.DS_Store
+**/__pycache__/**
+**/*.pyc
+**/*.egg-info/**
+vendor/**/build/**
+vendor/**/dist/**
