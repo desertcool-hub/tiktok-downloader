@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { DICT } from '@/lib/i18n';
 import PlatformNavigation from './PlatformNavigation';
+import { htmlLanguage } from '@/lib/locales.mjs';
 
 /* ---------- 工具函数 ---------- */
 
@@ -93,7 +94,7 @@ export default function HomeClient({ locale = 'en' }) {
 
   /* 路由语言同步到 <html lang> */
   useEffect(() => {
-    document.documentElement.lang = locale === 'zh' ? 'zh-CN' : 'en';
+    document.documentElement.lang = htmlLanguage(locale);
   }, [locale]);
 
   /* 感知性能：loading 分步推进 */
@@ -134,7 +135,10 @@ export default function HomeClient({ locale = 'en' }) {
       });
       const json = await res.json();
       if (!res.ok || !json.success) {
-        setErrMsg(json.error || t.hero.stFail);
+        const message = locale !== 'ja' ? json.error || t.hero.stFail
+          : res.status === 429 ? 'リクエストが多すぎます。しばらくしてから再度お試しください。'
+          : res.status === 400 ? t.hero.stInvalid : t.hero.stFail;
+        setErrMsg(message);
         setPhase('error');
       } else {
         setVideo(json.video);

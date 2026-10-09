@@ -38,6 +38,15 @@ test('FxEmbed v2 response keeps all available variants', () => {
   assert.equal(videos[0].formats.length, 2);
 });
 
+test('X posts without text leave titles empty for localized UI fallbacks', () => {
+  for (const text of ['', undefined]) {
+    const [video] = normalizeXTweet({ text, mediaDetails: [media('1')] });
+    assert.equal(video.title, '');
+  }
+  const [video] = normalizeXTweet({ text: '元の投稿テキスト', mediaDetails: [media('1')] });
+  assert.equal(video.title, '元の投稿テキスト');
+});
+
 test('X parsing falls back to FxEmbed when syndication is blocked', async () => {
   const result = await parseXVideo('https://x.com/test/status/12345', {
     fetchTweetImpl: async () => { throw new Error('403'); },

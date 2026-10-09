@@ -250,6 +250,28 @@ section {
   letter-spacing: -1px;
 }
 
+/* Keep decorative overflow from shifting the tool when results auto-scroll. */
+:lang(ja) .hero { overflow: clip; }
+
+:lang(ja) .hero h1 {
+  font-size: 40px;
+  letter-spacing: 0;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+:lang(ja) .section-head h2 {
+  font-size: 32px;
+  letter-spacing: 0;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 620px) {
+  :lang(ja) .hero h1 { font-size: 28px; }
+  :lang(ja) .section-head h2 { font-size: 24px; }
+}
+
 .grad-text {
   background: var(--grad-neon);
   -webkit-background-clip: text;

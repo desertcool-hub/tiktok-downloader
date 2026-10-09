@@ -44,7 +44,7 @@ export default function XVideoResult({ video, index, t, locale, platform = 'x' }
         <span className="cta-sub">{primary ? t.result.primarySub : t.result.secondarySub} · {format.label}</span></span>
     </a>;
   }
-  return <article className="result" aria-label={`${locale === 'zh' ? '视频' : 'Video'} ${index + 1}`}>
+  return <article className="result" aria-label={`${locale === 'zh' ? '视频' : locale === 'ja' ? '動画' : 'Video'} ${index + 1}`}>
     <div className="result-main">
       {cover && <div className="result-cover">
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -69,7 +69,7 @@ export default function XVideoResult({ video, index, t, locale, platform = 'x' }
         <button className="btn-ghost" onClick={cancel} aria-label={t.result.cancel} title={t.result.cancel}><X size={16} /></button>
       </div>}
       {state.phase === 'done' && <div className={styles.saved} role="status">{t.result.saved}</div>}
-      {state.error && <div className={styles.error} role="alert">{youtube ? youtubeErrorMessage(locale, state.errorCode || 'DOWNLOAD_FAILED', state.errorStatus, 'DOWNLOAD_FAILED') : locale === 'zh' ? state.error : 'Download failed. Try parsing the link again, or use desktop Chrome / Edge for files larger than 256 MB.'}</div>}
+      {state.error && <div className={styles.error} role="alert">{youtube ? youtubeErrorMessage(locale, state.errorCode || 'DOWNLOAD_FAILED', state.errorStatus, 'DOWNLOAD_FAILED') : locale === 'zh' ? state.error : locale === 'ja' ? 'ダウンロードに失敗しました。リンクを再解析してください。256 MB を超える動画にはパソコンの Chrome または Edge をお使いください。' : 'Download failed. Try parsing the link again, or use desktop Chrome / Edge for files larger than 256 MB.'}</div>}
     </div>
   </article>;
 }

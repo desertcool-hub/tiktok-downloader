@@ -22,6 +22,11 @@ JSON 记录导入及本地文件解密；X 支持公开帖子、多视频与清�
 纯 Vercel 试运行使用 yt-dlp、Deno 与 FFmpeg，仅支持 4 MiB 以内的带声音 MP4。
 需要额外安装 Python 依赖并配置服务端签名密钥，详见 [YouTube 部署说明](docs/youtube-vercel.md)。
 
+TikTok、X 和 YouTube 提供中文、英文和日文版本，顶部语言菜单切换时保留当前平台。
+默认首页 `/` 仍为 TikTok 英文下载页，首页描述与关键词也涵盖 X.com / Twitter 和 YouTube。
+日文页面为 `/ja`、`/x/ja` 和 `/youtube/ja`，各平台三种语言均提供 canonical、
+hreflang、FAQ 结构化数据并列入 sitemap；YouTube 日文页保留 4 MB 试用限制说明。
+
 ```bash
 npm install
 npm run dev        # 开发模式，http://localhost:3000

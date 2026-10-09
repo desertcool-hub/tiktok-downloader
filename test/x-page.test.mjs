@@ -10,14 +10,14 @@ test('X validates public status links without accepting lookalike hosts', () => 
   }
 });
 
-for (const locale of ['zh', 'en']) {
+for (const locale of ['zh', 'en', 'ja']) {
   test(`${locale} X SEO covers the same sections and metadata as TikTok`, () => {
     const t = X_DICT[locale];
     const meta = xMetadata(locale);
     assert.equal(meta.description, t.metaDesc);
-    assert.match(meta.title, /X.*Twitter/);
-    assert.deepEqual(meta.alternates.languages, { en: '/x/en', 'zh-CN': '/x' });
-    assert.equal(meta.alternates.canonical, locale === 'zh' ? '/x' : '/x/en');
+    assert.equal(meta.title, 'Free Online Video Downloader-X.com');
+    assert.deepEqual(meta.alternates.languages, { en: '/x/en', 'zh-CN': '/x', ja: '/x/ja' });
+    assert.equal(meta.alternates.canonical, { zh: '/x', en: '/x/en', ja: '/x/ja' }[locale]);
     assert.equal(meta.openGraph.url, meta.alternates.canonical);
     assert.equal(meta.twitter.card, 'summary_large_image');
     assert.equal(meta.openGraph.images[0].url, '/x/social-image');

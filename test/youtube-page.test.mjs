@@ -11,6 +11,7 @@ import * as youtubeCopy from '../lib/youtube-copy.mjs';
 import * as youtubeUrl from '../lib/youtube-url.mjs';
 import * as youtubeMedia from '../components/youtube-media.mjs';
 import * as xCopy from '../lib/x-copy.mjs';
+import * as locales from '../lib/locales.mjs';
 import { YOUTUBE_DICT, youtubeMetadata, youtubeFaqJsonLd, youtubeErrorMessage } from '../lib/youtube-copy.mjs';
 import { parseYoutubeUrl, looksLikeYoutube } from '../lib/youtube-url.mjs';
 import { youtubeDownloadUrl, youtubeCoverUrl } from '../components/youtube-media.mjs';
@@ -72,14 +73,14 @@ test('YouTube cover URLs use only the direct YouTube thumbnail host', () => {
     'https://cdn.example/cover.jpg']) assert.equal(youtubeCoverUrl(raw), null);
 });
 
-for (const locale of ['zh', 'en']) {
+for (const locale of ['zh', 'en', 'ja']) {
   test(`YouTube ${locale} metadata and six SEO sections match the FAQ schema`, () => {
     const t = YOUTUBE_DICT[locale];
     const meta = youtubeMetadata(locale);
-    assert.match(meta.title, /YouTube/);
+    assert.equal(meta.title, 'Free Online Video Downloader-youtube');
     assert.equal(meta.description, t.metaDesc);
-    assert.deepEqual(meta.alternates.languages, { en: '/youtube/en', 'zh-CN': '/youtube' });
-    assert.equal(meta.alternates.canonical, locale === 'zh' ? '/youtube' : '/youtube/en');
+    assert.deepEqual(meta.alternates.languages, { en: '/youtube/en', 'zh-CN': '/youtube', ja: '/youtube/ja' });
+    assert.equal(meta.alternates.canonical, { zh: '/youtube', en: '/youtube/en', ja: '/youtube/ja' }[locale]);
     assert.equal(meta.openGraph.url, meta.alternates.canonical);
     assert.equal(meta.openGraph.images[0].url, '/youtube/social-image');
     assert.deepEqual(meta.twitter.images, ['/youtube/social-image']);
@@ -132,7 +133,7 @@ test('YouTube routes, navigation and client connect to the shared frontend with 
   }
   assert.match(files[2], /endpoint="\/api\/youtube"/);
   assert.match(files[2], /timeoutMs=\{60_000\}/);
-  assert.match(files[3], /zh \? '\/youtube' : '\/youtube\/en'/);
+  assert.match(files[3], /platformPath\('youtube', locale\)/);
   assert.match(files[4], /overflow-x: auto/);
   assert.match(files[4], /\.language \{ flex-shrink: 0/);
   assert.ok(files[5].includes('`${SITE_URL}/youtube`'));
@@ -169,6 +170,7 @@ test('Shared JSX renders YouTube pages and signed result links while keeping X p
     [path.join(root, 'lib/youtube-copy.mjs'), youtubeCopy],
     [path.join(root, 'lib/youtube-url.mjs'), youtubeUrl],
     [path.join(root, 'lib/x-copy.mjs'), xCopy],
+    [path.join(root, 'lib/locales.mjs'), locales],
     [path.join(root, 'components/youtube-media.mjs'), youtubeMedia],
   ]);
   function load(filename) {
@@ -207,12 +209,18 @@ test('Shared JSX renders YouTube pages and signed result links while keeping X p
   assert.ok(xHtml.includes('/api/xdownload?u=https%3A%2F%2Fpbs.twimg.com%2Fcover.jpg&amp;inline=1'));
   assert.ok(xHtml.includes('/api/xdownload?u=https%3A%2F%2Fvideo.twimg.com%2Fvideo.mp4&amp;name='));
   assert.ok(xHtml.includes(xCopy.X_DICT.en.result.primaryCta));
-  for (const [locale, file] of [['zh', 'app/(zh)/youtube/page.js'], ['en', 'app/(en)/youtube/en/page.js']]) {
+  const untitledHtml = renderToStaticMarkup(React.createElement(Result, {
+    video: { ...xVideo, title: '' }, index: 0, t: xCopy.X_DICT.ja, locale: 'ja',
+  }));
+  assert.ok(untitledHtml.includes(xCopy.X_DICT.ja.result.untitled));
+  assert.ok(untitledHtml.includes('aria-label="動画 1"'));
+  assert.doesNotMatch(untitledHtml, /X 视频/);
+  for (const [locale, file] of [['zh', 'app/(zh)/youtube/page.js'], ['en', 'app/(en)/youtube/en/page.js'], ['ja', 'app/(ja)/youtube/ja/page.js']]) {
     const Page = load(path.join(root, file)).default;
     const html = renderToStaticMarkup(React.createElement(Page));
     assert.ok(html.includes(`<h1>${YOUTUBE_DICT[locale].hero.h1}</h1>`));
     for (const section of ['about', 'why', 'howto', 'mobile', 'pc', 'faq']) assert.ok(html.includes(`id="${section}"`));
-    assert.ok(html.includes(`href="${YOUTUBE_DICT[locale].altLocale.href}"`));
+    assert.ok(html.includes(`value="${YOUTUBE_DICT[locale].altLocale.href}"`));
     assert.ok(html.includes('aria-current="page">YouTube</a>'));
     const json = html.match(/<script type="application\/ld\+json">(.*?)<\/script>/)?.[1];
     assert.deepEqual(JSON.parse(json), youtubeFaqJsonLd(locale));

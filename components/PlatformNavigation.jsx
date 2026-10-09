@@ -1,8 +1,10 @@
 import styles from './PlatformNavigation.module.css';
 import { Play } from 'lucide-react';
+import { platformPath } from '@/lib/locales.mjs';
+import LanguageSelector from './LanguageSelector';
 
 export default function PlatformNavigation({ platform = 'tiktok', locale = 'en', t }) {
-  const zh = locale === 'zh';
+  const platformsLabel = { zh: '下载平台', en: 'Download platforms', ja: 'ダウンロード対象' }[locale] || 'Download platforms';
   return <nav className={`nav ${styles.nav}`}>
     <div className="nav-inner">
       <a className="brand" href="#top">
@@ -14,14 +16,14 @@ export default function PlatformNavigation({ platform = 'tiktok', locale = 'en',
         </span>VidSaveNow
       </a>
       <div className={`nav-links ${styles.links}`}>
-        <div className={styles.platforms} aria-label={zh ? '下载平台' : 'Download platforms'}>
-          <a href={zh ? '/zh' : '/'} aria-current={platform === 'tiktok' ? 'page' : undefined}>TikTok</a>
-          <a href={zh ? '/x' : '/x/en'} aria-current={platform === 'x' ? 'page' : undefined}>X / Twitter</a>
-          <a href={zh ? '/youtube' : '/youtube/en'} aria-current={platform === 'youtube' ? 'page' : undefined}>YouTube</a>
+        <div className={styles.platforms} aria-label={platformsLabel}>
+          <a href={platformPath('tiktok', locale)} aria-current={platform === 'tiktok' ? 'page' : undefined}>TikTok</a>
+          <a href={platformPath('x', locale)} aria-current={platform === 'x' ? 'page' : undefined}>X / Twitter</a>
+          <a href={platformPath('youtube', locale)} aria-current={platform === 'youtube' ? 'page' : undefined}>YouTube</a>
         </div>
         <a className={styles.sectionLink} href="#howto">{t.nav.howto}</a>
         <a className={styles.sectionLink} href="#faq">{t.nav.faq}</a>
-        <a className={`lang ${styles.language}`} href={t.altLocale.href}>{t.altLocale.label}</a>
+        <LanguageSelector platform={platform} locale={locale} />
       </div>
     </div>
   </nav>;

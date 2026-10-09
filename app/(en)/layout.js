@@ -1,13 +1,13 @@
 import { Analytics } from '@vercel/analytics/next';
+import { DICT } from '@/lib/i18n';
 import '../globals.css';
 
 const SITE_URL = process.env.SITE_URL || 'https://www.vidsavenow.com';
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
-  title: 'VidSaveNow - TikTok Video Downloader',
-  description:
-    'VidSaveNow is a free TikTok video downloader: paste a link and save HD MP4. No login, no watermark, works on any device. 免费在线 TikTok 视频下载工具。',
+  title: 'Free Online Video Downloader',
+  description: DICT.en.metaDesc,
   robots: {
     index: true,
     follow: true,
@@ -41,9 +41,8 @@ const siteJsonLd = {
   '@type': 'WebSite',
   name: 'VidSaveNow',
   url: SITE_URL,
-  inLanguage: ['en', 'zh-CN'],
-  description:
-    'Free online TikTok video downloader: save HD MP4 without login or watermark.',
+  inLanguage: ['en', 'zh-CN', 'ja'],
+  description: DICT.en.metaDesc,
 };
 
 export default function EnRootLayout({ children }) {

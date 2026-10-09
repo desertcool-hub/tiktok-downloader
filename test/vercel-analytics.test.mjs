@@ -5,7 +5,7 @@ import test from 'node:test';
 test('Vercel Analytics is installed and rendered in the root layout', async () => {
   const packageJson = JSON.parse(await readFile('package.json', 'utf8'));
   assert.ok(packageJson.dependencies['@vercel/analytics']);
-  for (const path of ['app/(en)/layout.js', 'app/(zh)/layout.js']) {
+  for (const path of ['app/(en)/layout.js', 'app/(zh)/layout.js', 'app/(ja)/layout.js']) {
     const layout = await readFile(path, 'utf8');
     assert.match(layout, /from ['"]@vercel\/analytics\/next['"]/);
     assert.match(layout, /<Analytics\s*\/>/);
