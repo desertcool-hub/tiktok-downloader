@@ -30,7 +30,7 @@ test('Default homepage stays a TikTok tool and metadata includes X and YouTube',
   const { tiktokMetadata } = await import('../lib/tiktok-seo.mjs');
   for (const locale of ['en', 'zh', 'ja']) {
     const meta = tiktokMetadata(locale);
-    assert.equal(meta.title, 'Free Online Video Downloader-Tiktok');
+    assert.equal(meta.title, 'TikTok Video Downloader Without Watermark | VidSaveNow');
     for (const brand of ['TikTok', 'X.com', 'YouTube']) {
       assert.ok(meta.description.includes(brand));
       assert.ok(meta.keywords.some(key => key.includes(brand) || key.includes(brand.toLowerCase())));
@@ -47,7 +47,7 @@ test('All languages use the requested platform titles and default site title', a
   const { xMetadata } = await import('../lib/x-copy.mjs');
   const { youtubeMetadata } = await import('../lib/youtube-copy.mjs');
   for (const locale of ['en', 'zh', 'ja']) {
-    for (const [metadata, title] of [[tiktokMetadata, 'Free Online Video Downloader-Tiktok'],
+    for (const [metadata, title] of [[tiktokMetadata, 'TikTok Video Downloader Without Watermark | VidSaveNow'],
       [xMetadata, 'Free Online Video Downloader-X.com'], [youtubeMetadata, 'Free Online Video Downloader-youtube']]) {
       const meta = metadata(locale);
       assert.equal(meta.title, title);

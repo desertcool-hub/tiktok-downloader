@@ -1,4 +1,5 @@
 import { Smartphone, Clipboard, Download, FolderOpen, Film, MonitorPlay, Gift, UserRound } from 'lucide-react';
+import FooterLinks from './FooterLinks';
 
 const featureIcons = [Film, MonitorPlay, Gift, UserRound];
 const stepIcons = [Smartphone, Clipboard, Download, FolderOpen];
@@ -7,7 +8,7 @@ function Heading({ section }) {
   return <div className="section-head"><div className="eyebrow">{section.eyebrow}</div><h2>{section.h2}</h2></div>;
 }
 
-export default function XPageContent({ t }) {
+export default function XPageContent({ t, locale = 'en' }) {
   return <>
     <div className="container">
       <section className="section section-tight" id="about">
@@ -35,7 +36,7 @@ export default function XPageContent({ t }) {
     </div>
     <footer><div className="container">
       <div className="disclaimer">{t.footer.disclaimer}</div><div className="footer-brand">VidSaveNow</div><div className="footer-tag">{t.footer.tag}</div>
-      <div className="footer-links"><a href="#">{t.footer.privacy}</a><span>·</span><a href="#">{t.footer.terms}</a><span>·</span><a href="#">{t.footer.contact}</a></div>
+      <FooterLinks locale={locale} labels={t.footer} />
       <div className="footer-copy">© {new Date().getFullYear()} VidSaveNow</div>
     </div></footer>
   </>;

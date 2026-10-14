@@ -112,4 +112,7 @@ server.js                  # Node 入口（读 PORT/HOST），用于 QW Pages �
 
 ## 合规提醒
 
-页面已内置免责声明。正式上线前建议补齐：服务条款、隐私政策、版权投诉（DMCA）页面——工具类站点接广告（如 AdSense）前这些是硬性要求。
+页面提供隐私政策、使用条款和联系页：英文为 `/privacy`、`/terms`、`/contact`，
+中文和日文分别添加 `/zh`、`/ja` 后缀。TikTok、X、YouTube 页的底部链接保留当前语言。
+联系邮箱为 `desertcool@gmail.com`，内容和修订日期集中在 `lib/site-documents.mjs`。
+页面说明当前数据处理、第三方服务、访问统计和内容授权要求，不构成特定地区法律合规的保证。

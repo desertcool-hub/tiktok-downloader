@@ -117,7 +117,7 @@ export default function VideoPlatformClient({ locale = 'zh', platform, t, valida
           </div>
         </div>
       </div>
-      <XPageContent t={t} />
+      <XPageContent t={t} locale={locale} />
     </main>
   </>;
 }

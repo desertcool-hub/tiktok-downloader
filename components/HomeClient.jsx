@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { DICT } from '@/lib/i18n';
 import PlatformNavigation from './PlatformNavigation';
+import FooterLinks from './FooterLinks';
 import { htmlLanguage } from '@/lib/locales.mjs';
 
 /* ---------- 工具函数 ---------- */
@@ -501,13 +502,7 @@ export default function HomeClient({ locale = 'en' }) {
             <div className="disclaimer">{t.footer.disclaimer}</div>
             <div className="footer-brand">VidSaveNow</div>
             <div className="footer-tag">{t.footer.tag}</div>
-            <div className="footer-links">
-              <a href="#">{t.footer.privacy}</a>
-              <span>·</span>
-              <a href="#">{t.footer.terms}</a>
-              <span>·</span>
-              <a href="#">{t.footer.contact}</a>
-            </div>
+            <FooterLinks locale={locale} labels={t.footer} />
             <div className="footer-copy">© {new Date().getFullYear()} VidSaveNow</div>
           </div>
         </footer>

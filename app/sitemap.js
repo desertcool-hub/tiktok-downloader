@@ -90,5 +90,12 @@ export default function sitemap() {
       priority: 0.8,
       alternates: { languages: { en: `${SITE_URL}/youtube/en`, 'zh-CN': `${SITE_URL}/youtube`, ja: `${SITE_URL}/youtube/ja` } },
     },
+    ...SITE_DOCUMENTS.flatMap(document => LOCALES.map(locale => ({
+      url: `${SITE_URL}${documentPath(document, locale.code)}`,
+      lastModified: new Date(DOCUMENT_UPDATED), changeFrequency: 'monthly', priority: 0.3,
+      alternates: { languages: Object.fromEntries(LOCALES.map(item => [item.language, `${SITE_URL}${documentPath(document, item.code)}`])) },
+    }))),
   ];
 }
+import { LOCALES } from '../lib/locales.mjs';
+import { SITE_DOCUMENTS, DOCUMENT_UPDATED, documentPath } from '../lib/site-documents.mjs';
