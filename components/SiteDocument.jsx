@@ -28,7 +28,7 @@ export default function SiteDocument({ document, locale }) {
         <h2>{copy.email}</h2>
         <a href={`mailto:${SITE_CONTACT_EMAIL}`}><Mail size={18} aria-hidden="true" />{SITE_CONTACT_EMAIL}</a>
       </div>
-      {document === 'privacy' && <a className={styles.reference} href="https://vercel.com/docs/analytics/privacy-policy">Vercel Web Analytics — Privacy and Compliance</a>}
+      {document === 'privacy' && <a className={styles.reference} href="https://vercel.com/docs/analytics/privacy-policy">{copy.reference}</a>}
     </main>
     <footer className={styles.footer}>
       <FooterLinks locale={locale} labels={DICT[locale].footer} />

@@ -79,7 +79,8 @@ for (const locale of ['zh', 'en', 'ja']) {
     const meta = youtubeMetadata(locale);
     assert.equal(meta.title, 'Free Online Video Downloader-youtube');
     assert.equal(meta.description, t.metaDesc);
-    assert.deepEqual(meta.alternates.languages, { en: '/youtube/en', 'zh-CN': '/youtube', ja: '/youtube/ja' });
+    assert.deepEqual(meta.alternates.languages, { en: '/youtube/en', 'zh-CN': '/youtube', ja: '/youtube/ja',
+      id: '/youtube/id', es: '/youtube/es', 'pt-BR': '/youtube/pt', vi: '/youtube/vi' });
     assert.equal(meta.alternates.canonical, { zh: '/youtube', en: '/youtube/en', ja: '/youtube/ja' }[locale]);
     assert.equal(meta.openGraph.url, meta.alternates.canonical);
     assert.equal(meta.openGraph.images[0].url, '/youtube/social-image');
@@ -136,8 +137,8 @@ test('YouTube routes, navigation and client connect to the shared frontend with 
   assert.match(files[3], /platformPath\('youtube', locale\)/);
   assert.match(files[4], /overflow-x: auto/);
   assert.match(files[4], /\.language \{ flex-shrink: 0/);
-  assert.ok(files[5].includes('`${SITE_URL}/youtube`'));
-  assert.ok(files[5].includes('`${SITE_URL}/youtube/en`'));
+  const { default: sitemap } = await import('../app/sitemap.js');
+  for (const route of ['/youtube', '/youtube/en']) assert.ok(sitemap().some(item => new URL(item.url).pathname === route));
 });
 
 test('The local YouTube proxy allows the Python deadline without changing production rewrites', async () => {

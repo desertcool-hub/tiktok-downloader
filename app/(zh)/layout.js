@@ -1,5 +1,6 @@
 import { Analytics } from '@vercel/analytics/next';
 import { DICT } from '@/lib/i18n';
+import { LOCALES } from '@/lib/locales.mjs';
 import '../globals.css';
 
 const SITE_URL = process.env.SITE_URL || 'https://www.vidsavenow.com';
@@ -41,7 +42,7 @@ const siteJsonLd = {
   '@type': 'WebSite',
   name: 'VidSaveNow',
   url: SITE_URL,
-  inLanguage: ['en', 'zh-CN', 'ja'],
+  inLanguage: LOCALES.map(item => item.language),
   description: DICT.zh.metaDesc,
 };
 

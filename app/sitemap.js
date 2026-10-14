@@ -1,101 +1,27 @@
+import { LOCALES, platformPath, languageAlternates } from '../lib/locales.mjs';
+import { SITE_DOCUMENTS, DOCUMENT_UPDATED, documentPath } from '../lib/site-documents.mjs';
+
 const SITE_URL = process.env.SITE_URL || 'https://www.vidsavenow.com';
+
+function absoluteAlternates(paths) {
+  return { languages: Object.fromEntries(Object.entries(paths).map(([language, path]) => [language, `${SITE_URL}${path}`])) };
+}
 
 export default function sitemap() {
   const now = new Date();
-
-  return [
-    {
-      url: `${SITE_URL}/`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 1,
-      alternates: {
-        languages: {
-          en: `${SITE_URL}/`,
-          'zh-CN': `${SITE_URL}/zh`,
-          ja: `${SITE_URL}/ja`,
-        },
-      },
-    },
-    {
-      url: `${SITE_URL}/zh`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.9,
-      alternates: {
-        languages: {
-          en: `${SITE_URL}/`,
-          'zh-CN': `${SITE_URL}/zh`,
-          ja: `${SITE_URL}/ja`,
-        },
-      },
-    },
-    {
-      url: `${SITE_URL}/weixin`,
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.8,
-      alternates: {
-        languages: {
-          'zh-CN': `${SITE_URL}/weixin`,
-        },
-      },
-    },
-    {
-      url: `${SITE_URL}/x`,
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.8,
-      alternates: { languages: { en: `${SITE_URL}/x/en`, 'zh-CN': `${SITE_URL}/x`, ja: `${SITE_URL}/x/ja` } },
-    },
-    {
-      url: `${SITE_URL}/x/en`,
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.8,
-      alternates: { languages: { en: `${SITE_URL}/x/en`, 'zh-CN': `${SITE_URL}/x`, ja: `${SITE_URL}/x/ja` } },
-    },
-    {
-      url: `${SITE_URL}/youtube`,
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.8,
-      alternates: { languages: { en: `${SITE_URL}/youtube/en`, 'zh-CN': `${SITE_URL}/youtube`, ja: `${SITE_URL}/youtube/ja` } },
-    },
-    {
-      url: `${SITE_URL}/youtube/en`,
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.8,
-      alternates: { languages: { en: `${SITE_URL}/youtube/en`, 'zh-CN': `${SITE_URL}/youtube`, ja: `${SITE_URL}/youtube/ja` } },
-    },
-    {
-      url: `${SITE_URL}/ja`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.9,
-      alternates: { languages: { en: `${SITE_URL}/`, 'zh-CN': `${SITE_URL}/zh`, ja: `${SITE_URL}/ja` } },
-    },
-    {
-      url: `${SITE_URL}/x/ja`,
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.8,
-      alternates: { languages: { en: `${SITE_URL}/x/en`, 'zh-CN': `${SITE_URL}/x`, ja: `${SITE_URL}/x/ja` } },
-    },
-    {
-      url: `${SITE_URL}/youtube/ja`,
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.8,
-      alternates: { languages: { en: `${SITE_URL}/youtube/en`, 'zh-CN': `${SITE_URL}/youtube`, ja: `${SITE_URL}/youtube/ja` } },
-    },
-    ...SITE_DOCUMENTS.flatMap(document => LOCALES.map(locale => ({
-      url: `${SITE_URL}${documentPath(document, locale.code)}`,
-      lastModified: new Date(DOCUMENT_UPDATED), changeFrequency: 'monthly', priority: 0.3,
-      alternates: { languages: Object.fromEntries(LOCALES.map(item => [item.language, `${SITE_URL}${documentPath(document, item.code)}`])) },
-    }))),
-  ];
+  const platforms = ['tiktok', 'x', 'youtube'].flatMap(platform => LOCALES.map(locale => ({
+    url: `${SITE_URL}${platformPath(platform, locale.code)}`, lastModified: now,
+    changeFrequency: platform === 'tiktok' ? 'daily' : 'weekly',
+    priority: platform === 'tiktok' ? locale.code === 'en' ? 1 : 0.9 : 0.8,
+    alternates: absoluteAlternates(languageAlternates(platform)),
+  })));
+  const documents = SITE_DOCUMENTS.flatMap(document => LOCALES.map(locale => ({
+    url: `${SITE_URL}${documentPath(document, locale.code)}`, lastModified: new Date(DOCUMENT_UPDATED),
+    changeFrequency: 'monthly', priority: 0.3,
+    alternates: absoluteAlternates(Object.fromEntries(LOCALES.map(item => [item.language, documentPath(document, item.code)]))),
+  })));
+  return [...platforms, {
+    url: `${SITE_URL}/weixin`, lastModified: now, changeFrequency: 'weekly', priority: 0.8,
+    alternates: absoluteAlternates({ 'zh-CN': '/weixin' }),
+  }, ...documents];
 }
-import { LOCALES } from '../lib/locales.mjs';
-import { SITE_DOCUMENTS, DOCUMENT_UPDATED, documentPath } from '../lib/site-documents.mjs';

@@ -1,0 +1,9 @@
+import XClient from '@/components/XClient';
+import { xMetadata, xFaqJsonLd } from '@/lib/x-copy.mjs';
+
+export const metadata = xMetadata('es');
+export default function Page() {
+  return <><XClient locale="es" />
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(xFaqJsonLd('es')).replace(/</g, '\\u003c') }} />
+  </>;
+}

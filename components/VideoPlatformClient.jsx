@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import PlatformNavigation from './PlatformNavigation';
 import XVideoResult from './XVideoResult';
 import XPageContent from './XPageContent';
+import { parseErrorMessage } from '@/lib/ui-copy.mjs';
 
 export default function VideoPlatformClient({ locale = 'zh', platform, t, validateUrl, endpoint, errorMessage, timeoutMs = 30_000 }) {
   const [url, setUrl] = useState('');
@@ -66,8 +67,9 @@ export default function VideoPlatformClient({ locale = 'zh', platform, t, valida
         body: JSON.stringify({ url: value }), signal: AbortSignal.any([abort.signal, AbortSignal.timeout(timeoutMs)]) });
       const json = await response.json();
       if (!response.ok || !json.success || !json.videos?.length) {
-        const message = errorMessage ? errorMessage(json.code || (json.success ? 'NO_VIDEO' : undefined), response.status) : locale === 'zh' ? json.error : response.status === 429 ? 'Too many requests. Please try again later.'
-          : json.code === 'NO_VIDEO' ? 'This post has no downloadable MP4 video. Live streams and image-only posts are not supported.' : t.hero.stFail;
+        const code = json.code || (json.success ? 'NO_VIDEO' : undefined);
+        const message = errorMessage ? errorMessage(code, response.status)
+          : parseErrorMessage(locale, code, response.status, t.hero.stFail, t.hero.stInvalid, json.error);
         setError(message || t.hero.stFail); setPhase('error');
       } else {
         setVideos(json.videos); setPhase('success');

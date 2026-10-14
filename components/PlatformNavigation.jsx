@@ -2,9 +2,10 @@ import styles from './PlatformNavigation.module.css';
 import { Play } from 'lucide-react';
 import { platformPath } from '@/lib/locales.mjs';
 import LanguageSelector from './LanguageSelector';
+import { uiCopy } from '@/lib/ui-copy.mjs';
 
 export default function PlatformNavigation({ platform = 'tiktok', locale = 'en', t }) {
-  const platformsLabel = { zh: '下载平台', en: 'Download platforms', ja: 'ダウンロード対象' }[locale] || 'Download platforms';
+  const platformsLabel = uiCopy(locale).platformsLabel;
   return <nav className={`nav ${styles.nav}`}>
     <div className="nav-inner">
       <a className="brand" href="#top">

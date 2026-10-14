@@ -5,6 +5,7 @@ import { DICT } from '@/lib/i18n';
 import PlatformNavigation from './PlatformNavigation';
 import FooterLinks from './FooterLinks';
 import { htmlLanguage } from '@/lib/locales.mjs';
+import { parseErrorMessage } from '@/lib/ui-copy.mjs';
 
 /* ---------- 工具函数 ---------- */
 
@@ -136,9 +137,7 @@ export default function HomeClient({ locale = 'en' }) {
       });
       const json = await res.json();
       if (!res.ok || !json.success) {
-        const message = locale !== 'ja' ? json.error || t.hero.stFail
-          : res.status === 429 ? 'リクエストが多すぎます。しばらくしてから再度お試しください。'
-          : res.status === 400 ? t.hero.stInvalid : t.hero.stFail;
+        const message = parseErrorMessage(locale, json.code, res.status, t.hero.stFail, t.hero.stInvalid, json.error);
         setErrMsg(message);
         setPhase('error');
       } else {
@@ -299,7 +298,7 @@ export default function HomeClient({ locale = 'en' }) {
                     {video.cover && (
                       <div className="result-cover">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={proxied(video.cover, true)} alt={video.title || 'cover'} />
+                        <img src={proxied(video.cover, true)} alt={video.title || ''} />
                         {video.duration > 0 && (
                           <span className="result-duration">{formatDuration(video.duration)}</span>
                         )}
@@ -309,7 +308,7 @@ export default function HomeClient({ locale = 'en' }) {
                       <div className="result-author">
                         {video.author?.avatar && (
                           // eslint-disable-next-line @next/next/no-img-element
-                          <img src={proxied(video.author.avatar, true)} alt="avatar" />
+                          <img src={proxied(video.author.avatar, true)} alt="" />
                         )}
                         <div>
                           <div className="name">{video.author?.name || t.result.unknownAuthor}</div>
@@ -352,8 +351,8 @@ export default function HomeClient({ locale = 'en' }) {
                             >
                               <span className="cta-ico" aria-hidden="true">⬇</span>
                               <span className="cta-copy">
-                                <span className="cta-label">{t.result.primaryCta}</span>
-                                <span className="cta-sub">{t.result.primarySub}</span>
+                                <span className="cta-label">{primary.kind === 'hd_nowm' ? t.result.primaryCta : t.result.dl}</span>
+                                <span className="cta-sub">{t.formats[primary.kind] || t.result.saveAs + ' MP4'}</span>
                               </span>
                             </a>
                           )}
@@ -367,7 +366,7 @@ export default function HomeClient({ locale = 'en' }) {
                               <span className="cta-ico" aria-hidden="true">⬇</span>
                               <span className="cta-copy">
                                 <span className="cta-label">{t.result.secondaryCta}</span>
-                                <span className="cta-sub">{t.result.secondarySub}</span>
+                                <span className="cta-sub">{t.formats[secondary.kind] || t.result.secondarySub}</span>
                               </span>
                             </a>
                           )}

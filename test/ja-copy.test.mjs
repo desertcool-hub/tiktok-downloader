@@ -3,9 +3,8 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { X_DICT } from '../lib/x-copy.mjs';
 import { YOUTUBE_DICT } from '../lib/youtube-copy.mjs';
+import { DICT } from '../lib/i18n.js';
 
-const source = await readFile(new URL('../lib/i18n.js', import.meta.url), 'utf8');
-const { DICT } = await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
 const dictionaries = { TikTok: DICT, X: X_DICT, YouTube: YOUTUBE_DICT };
 const sections = ['intro', 'why', 'howto', 'mobile', 'pc', 'faq'];
 const kana = /[\p{Script=Hiragana}\p{Script=Katakana}]/u;

@@ -22,10 +22,13 @@ JSON 记录导入及本地文件解密；X 支持公开帖子、多视频与清�
 纯 Vercel 试运行使用 yt-dlp、Deno 与 FFmpeg，仅支持 4 MiB 以内的带声音 MP4。
 需要额外安装 Python 依赖并配置服务端签名密钥，详见 [YouTube 部署说明](docs/youtube-vercel.md)。
 
-TikTok、X 和 YouTube 提供中文、英文和日文版本，顶部语言菜单切换时保留当前平台。
+TikTok、X 和 YouTube 提供中文、英文、日文、印尼语、西班牙语、巴西葡萄牙语和越南语版本，顶部语言菜单切换时保留当前平台。
 默认首页 `/` 仍为 TikTok 英文下载页，首页描述与关键词也涵盖 X.com / Twitter 和 YouTube。
-日文页面为 `/ja`、`/x/ja` 和 `/youtube/ja`，各平台三种语言均提供 canonical、
-hreflang、FAQ 结构化数据并列入 sitemap；YouTube 日文页保留 4 MB 试用限制说明。
+日文页面为 `/ja`、`/x/ja` 和 `/youtube/ja`；新语言分别使用 `id`、`es`、`pt`、`vi`，
+例如 `/es`、`/x/es`、`/youtube/es`。各平台七种语言均提供独立标题、描述、关键词、canonical、
+hreflang、FAQ 结构化数据并列入 sitemap；葡萄牙语的 HTML / hreflang 标记为 `pt-BR`。
+所有 YouTube 语言页均保留 4 MB 试用限制说明。视频号暂时仅提供中文。
+实现与验证记录见 [多语言说明](docs/multilingual.md)。
 
 ```bash
 npm install
@@ -39,11 +42,16 @@ npm run build
 npm run start
 ```
 
-> 注意：本机在国内网络下访问 TikTok/TikWM 需要走代理。启动时带上代理环境变量即可：
+> 注意：本机直连 TikTok/TikWM 可能返回 403 或超时。浏览器能访问并不表示 Node 服务已使用系统代理。
+> 本机使用 Node 24.13.0 时，需要在启动进程前同时开启代理支持并设置代理地址；Clash 需已运行且监听对应端口：
 >
 > ```bash
-> HTTPS_PROXY=http://127.0.0.1:7897 HTTP_PROXY=http://127.0.0.1:7897 npm run start
+> NODE_USE_ENV_PROXY=1 HTTPS_PROXY=http://127.0.0.1:7897 HTTP_PROXY=http://127.0.0.1:7897 NO_PROXY=localhost,127.0.0.1,::1 npm run dev -- --port 3002
 > ```
+>
+> 生产模式本地测试可将最后的命令换成 `npm run start -- --port 3002`。
+> 这是本机启动配置，不要在 Vercel 设置 `127.0.0.1:7897`；修改代理环境后需重启服务。
+> [Node 官方代理说明](https://nodejs.org/en/learn/http/enterprise-network-configuration)。
 
 ## 部署架构（当前：家庭后端 + QW Pages 前端）
 
@@ -87,20 +95,23 @@ app/
     ├── parse/route.js     # POST /api/parse  解析视频信息（限流 15 次/分/IP）
     └── download/route.js  # GET  /api/download?u=&name=&inline=1  流式代理下载
 components/
-└── HomeClient.jsx         # 双语言共用的客户端页面组件（首屏→SEO正文→Why→How to→Mobile→PC→FAQ）
+└── HomeClient.jsx         # TikTok 七种语言共用的客户端页面组件
 lib/
-├── i18n.js                # en / zh 文案词典（改文案只动这里）
+├── i18n.js                # TikTok 文案词典入口
+├── translations/         # id / es / pt / vi 三个平台与文档译文
+├── locales.mjs           # 语言、平台地址和 hreflang 注册表
 ├── providers.js           # 解析层：短链还原 + TikWM / 页面提取双 Provider + 域名白名单
 └── ratelimit.js           # 内存滑动窗口限流
 server.js                  # Node 入口（读 PORT/HOST），用于 QW Pages 等动态部署
 ```
 
-### 双语与 SEO
+### 多语言与 SEO
 
-- `/` 默认英文（吃 Google 长尾词），`/zh` 中文；两路由互相用 `alternates.languages` + 导航语言按钮互链。
+- `/` 默认英文，`/zh` 中文；已有中英日地址保持不变。新增语言拥有独立地址，用 `alternates.languages` 和语言菜单互链，不按 IP 强制跳转。
 - 每个路由各自输出本页语言的 FAQPage JSON-LD 与 canonical。
 - 信息架构对齐工具站打法：首屏只做转化（标题→副标题→输入框→信任行），SEO 正文与长尾 FAQ 全部下沉到首屏之下。
-- 改文案只需编辑 `lib/i18n.js`；新增语言 = 加一份词典 + 一个路由目录。
+- 新语言正文、错误提示、FAQ 和隐私等文档集中在 `lib/translations/`；语言注册表、平台词典入口和路由共同接入。
+- sitemap 包含 21 个下载页、21 个文档页和 1 个中文视频号页。上线后需在搜索站长工具提交 sitemap；翻译本身不保证收录、排名或流量。
 
 ## 已知限制与后续方向
 
@@ -108,11 +119,11 @@ server.js                  # Node 入口（读 PORT/HOST），用于 QW Pages �
 - **解析层会失效**：TikTok 反爬与 TikWM 接口都会变化，`lib/providers.js` 里新增一个 Provider 函数加入数组即可扩展（这正是多源容错设计的目的）。
 - **内存限流仅适用于单实例**：多实例部署请换成 Redis 或 Vercel KV。
 - **TikWM 免费接口限速约 1 次/秒**：流量上来后建议自建解析或购买商用 API。
-- 后续可扩展：抖音链接支持、多语言版本、解析成功率监控。
+- 后续可扩展：抖音链接支持、译文母语复核、解析成功率监控。
 
 ## 合规提醒
 
 页面提供隐私政策、使用条款和联系页：英文为 `/privacy`、`/terms`、`/contact`，
-中文和日文分别添加 `/zh`、`/ja` 后缀。TikTok、X、YouTube 页的底部链接保留当前语言。
+其他语言分别添加 `/zh`、`/ja`、`/id`、`/es`、`/pt`、`/vi` 后缀。TikTok、X、YouTube 页的底部链接保留当前语言。
 联系邮箱为 `desertcool@gmail.com`，内容和修订日期集中在 `lib/site-documents.mjs`。
 页面说明当前数据处理、第三方服务、访问统计和内容授权要求，不构成特定地区法律合规的保证。

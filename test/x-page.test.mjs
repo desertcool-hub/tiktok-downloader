@@ -16,7 +16,8 @@ for (const locale of ['zh', 'en', 'ja']) {
     const meta = xMetadata(locale);
     assert.equal(meta.description, t.metaDesc);
     assert.equal(meta.title, 'Free Online Video Downloader-X.com');
-    assert.deepEqual(meta.alternates.languages, { en: '/x/en', 'zh-CN': '/x', ja: '/x/ja' });
+    assert.deepEqual(meta.alternates.languages, { en: '/x/en', 'zh-CN': '/x', ja: '/x/ja',
+      id: '/x/id', es: '/x/es', 'pt-BR': '/x/pt', vi: '/x/vi' });
     assert.equal(meta.alternates.canonical, { zh: '/x', en: '/x/en', ja: '/x/ja' }[locale]);
     assert.equal(meta.openGraph.url, meta.alternates.canonical);
     assert.equal(meta.twitter.card, 'summary_large_image');

@@ -6,11 +6,12 @@ test('Language routes preserve each platform with Japanese alternatives', async 
   const { platformPath, languageAlternates, htmlLanguage, openGraphLocales } = await import('../lib/locales.mjs');
   for (const [platform, paths] of Object.entries({ tiktok: ['/', '/zh', '/ja'], x: ['/x/en', '/x', '/x/ja'], youtube: ['/youtube/en', '/youtube', '/youtube/ja'] })) {
     for (const [index, locale] of ['en', 'zh', 'ja'].entries()) assert.equal(platformPath(platform, locale), paths[index]);
-    assert.deepEqual(languageAlternates(platform), { en: paths[0], 'zh-CN': paths[1], ja: paths[2] });
+    const languages = languageAlternates(platform);
+    assert.deepEqual({ en: languages.en, 'zh-CN': languages['zh-CN'], ja: languages.ja }, { en: paths[0], 'zh-CN': paths[1], ja: paths[2] });
   }
   assert.equal(htmlLanguage('ja'), 'ja');
   assert.equal(openGraphLocales('ja').locale, 'ja_JP');
-  assert.deepEqual(openGraphLocales('ja').alternateLocale, ['en_US', 'zh_CN']);
+  assert.deepEqual(openGraphLocales('ja').alternateLocale, ['en_US', 'zh_CN', 'id_ID', 'es_ES', 'pt_BR', 'vi_VN']);
 });
 
 test('Japanese routes and layout render platform-specific clients and FAQ schema', async () => {
