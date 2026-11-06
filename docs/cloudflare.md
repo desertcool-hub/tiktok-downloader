@@ -3,7 +3,7 @@
 使用 OpenNext 部署 Next.js，仓库已包含 wrangler.jsonc 和 open-next.config.ts。
 
 - 构建命令：`npm run build:cloudflare`
-- 部署命令：`npx wrangler deploy`
+- 部署命令：`npx wrangler deploy`（配置会自动执行 OpenNext 构建；控制台原有 `npm run build` 也可保留）
 - 本地预览：`npm run preview`
 - 环境变量：`SITE_URL=https://你的域名`，在构建环境和 Worker 运行环境均设置。
 - 如需家庭/VPS TikTok 后端，设置 `BACKEND_URL`。
