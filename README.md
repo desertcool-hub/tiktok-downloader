@@ -73,6 +73,10 @@ cloudflared 隧道（trycloudflare.com 临时域名）
   变更后需重烘发布副本并重发（脚本头部有命令）。终态是自有域名 + cloudflared 命名隧道。
 - 家庭 Mac 关机/休眠 = 公网站解析不可用；正式运营请迁海外 VPS 作后端。
 
+## 部署（Cloudflare Workers）
+
+已提供 Next.js 15 + OpenNext 配置，构建使用 `npm run build:cloudflare`，部署使用 `npx wrangler deploy`。YouTube 需配置独立 Python 后端，详见 [Cloudflare 部署说明](docs/cloudflare.md)。
+
 ## 部署（Vercel）
 
 1. 把项目推到 GitHub 仓库
