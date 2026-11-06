@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { Download } from 'lucide-react';
 import styles from './DownloadTools.module.css';
 
@@ -6,12 +7,12 @@ export default function DownloadToolShell({ platform, title, description, faq = 
     <div className={styles.page} data-platform={platform}>
       <header className={styles.nav}>
         <div className={styles.navInner}>
-          <a className={styles.brand} href="/"><Download size={21} aria-hidden="true" />VidSaveNow</a>
+          <Link className={styles.brand} href="/"><Download size={21} aria-hidden="true" />VidSaveNow</Link>
           <nav className={styles.links} aria-label="下载平台">
-            <a href="/zh">TikTok</a>
-            <a href="/weixin" aria-current={platform === 'weixin' ? 'page' : undefined}>微信视频号</a>
-            <a href="/x" aria-current={platform === 'x' ? 'page' : undefined}>X / Twitter</a>
-            <a href="/youtube" aria-current={platform === 'youtube' ? 'page' : undefined}>YouTube</a>
+            <Link href="/zh">TikTok</Link>
+            <Link href="/weixin" aria-current={platform === 'weixin' ? 'page' : undefined}>微信视频号</Link>
+            <Link href="/x" aria-current={platform === 'x' ? 'page' : undefined}>X / Twitter</Link>
+            <Link href="/youtube" aria-current={platform === 'youtube' ? 'page' : undefined}>YouTube</Link>
           </nav>
         </div>
       </header>
@@ -25,7 +26,7 @@ export default function DownloadToolShell({ platform, title, description, faq = 
         </section>
       </main>
       <footer className={styles.footer}>
-        <div><a href="/zh">TikTok</a><a href="/weixin">微信视频号</a><a href="/x">X / Twitter</a><a href="/youtube">YouTube</a></div>
+        <div><Link href="/zh">TikTok</Link><Link href="/weixin">微信视频号</Link><Link href="/x">X / Twitter</Link><Link href="/youtube">YouTube</Link></div>
         <p>仅保存你拥有版权或已获授权的内容。VidSaveNow 与上述平台无关联。</p>
       </footer>
     </div>
