@@ -50,7 +50,9 @@ test('X posts without text leave titles empty for localized UI fallbacks', () =>
 test('X parsing falls back to FxEmbed when syndication is blocked', async () => {
   const result = await parseXVideo('https://x.com/test/status/12345', {
     fetchTweetImpl: async () => { throw new Error('403'); },
-    fetchImpl: async (url) => {
+    fetchImpl: async (url, options) => {
+      assert.ok(options.headers['User-Agent']);
+      assert.equal(options.headers.Accept, 'application/json');
       assert.equal(url, 'https://api.fxtwitter.com/2/status/12345');
       return Response.json({ code: 200, status: { text: '公开视频', media: { videos: [{
         url: 'https://video.twimg.com/vid/1280x720/a.mp4',
