@@ -15,8 +15,12 @@ async function forward(req) {
     const upstream = await fetch(target, {
       method: req.method, headers,
       body: req.method === 'POST' ? await req.text() : undefined,
-      redirect: 'error', signal: AbortSignal.timeout(120_000),
+      redirect: 'manual', signal: AbortSignal.timeout(120_000),
     });
+    if (upstream.status >= 300 && upstream.status < 400) {
+      await upstream.body?.cancel();
+      throw new Error('Backend redirect rejected');
+    }
     const responseHeaders = new Headers();
     for (const name of ['content-type', 'content-length', 'content-disposition', 'content-range', 'accept-ranges']) {
       if (upstream.headers.has(name)) responseHeaders.set(name, upstream.headers.get(name));

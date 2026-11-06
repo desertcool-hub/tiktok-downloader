@@ -19,7 +19,7 @@ async function download(req, input) {
           ...(req.headers.get('range') ? { Range: req.headers.get('range') } : {}),
           ...(process.env.BACKEND_TOKEN ? { Authorization: `Bearer ${process.env.BACKEND_TOKEN}` } : {}) },
         body: JSON.stringify(input), signal: AbortSignal.any([req.signal, AbortSignal.timeout(55_000)]),
-        cache: 'no-store', redirect: 'error',
+        cache: 'no-store', redirect: 'manual',
       });
       const headers = new Headers({ 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
       for (const key of ['content-type', 'content-length', 'content-range', 'content-disposition', 'accept-ranges']) {
