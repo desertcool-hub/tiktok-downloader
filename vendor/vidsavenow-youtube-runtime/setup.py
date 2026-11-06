@@ -16,7 +16,13 @@ class BundledRuntime(build_py):
         executable = next(file for file in deno.files
                           if file.name in ('deno', 'deno.exe')
                           and 'deno' not in file.parts[:-1])
-        source = str(deno.locate_file(executable))
+        source_path = Path(deno.locate_file(executable))
+        if not source_path.is_file():
+            # pip --target relocates scripts without rewriting RECORD paths.
+            source_path = Path(deno.locate_file('')) / 'bin' / executable.name
+        if not source_path.is_file():
+            raise FileNotFoundError(source_path)
+        source = str(source_path)
         version = subprocess.check_output([source, '--version'], text=True).splitlines()[0]
         if version.split()[:2] != ['deno', '2.9.7']:
             raise RuntimeError('Unexpected Deno version')
