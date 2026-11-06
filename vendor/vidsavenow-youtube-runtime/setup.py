@@ -10,15 +10,19 @@ from setuptools.command.build_py import build_py
 class BundledRuntime(build_py):
     def run(self):
         super().run()
-        from deno._find_deno import find_deno_bin
-        source = find_deno_bin()
+        # Resolve the executable from the installed build dependency's RECORD.
+        # sysconfig script paths point outside pip's isolated build environment.
+        deno = distribution('deno')
+        executable = next(file for file in deno.files
+                          if file.name in ('deno', 'deno.exe')
+                          and 'deno' not in file.parts[:-1])
+        source = str(deno.locate_file(executable))
         version = subprocess.check_output([source, '--version'], text=True).splitlines()[0]
         if version.split()[:2] != ['deno', '2.9.7']:
             raise RuntimeError('Unexpected Deno version')
         destination = Path(self.build_lib) / 'vidsavenow_runtime' / 'deno'
         shutil.copyfile(source, destination)
         destination.chmod(0o755)
-        deno = distribution('deno')
         license_file = next(file for file in deno.files if file.name == 'LICENSE')
         shutil.copyfile(deno.locate_file(license_file), destination.with_name('LICENSE-DENO'))
 
