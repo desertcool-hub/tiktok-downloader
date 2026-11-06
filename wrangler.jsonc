@@ -10,8 +10,5 @@
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
-  },
-  "build": {
-    "command": "npm run build:cloudflare"
   }
 }

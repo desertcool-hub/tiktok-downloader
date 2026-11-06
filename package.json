@@ -5,14 +5,15 @@
   "scripts": {
     "dev": "next dev",
     "dev:youtube": "node scripts/dev-youtube.mjs",
-    "build": "next build",
+    "build": "opennextjs-cloudflare build",
     "start": "next start",
     "test": "node --test",
     "test:youtube": "python3 test/youtube_python_test.py",
     "lint": "eslint app components lib",
     "build:cloudflare": "opennextjs-cloudflare build",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "build:next": "next build"
   },
   "dependencies": {
     "@opennextjs/cloudflare": "^1.20.16",
