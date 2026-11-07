@@ -62,6 +62,7 @@ export async function POST(req) {
       return NextResponse.json(
         {
           success: false,
+          code: 'TIKTOK_SOURCE_UNAVAILABLE',
           error: '解析失败：视频可能已被删除、设为私密，或解析服务暂时不可用，请稍后重试',
         },
         { status: 502 }

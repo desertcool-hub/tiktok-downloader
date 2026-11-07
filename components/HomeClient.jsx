@@ -6,6 +6,7 @@ import PlatformNavigation from './PlatformNavigation';
 import FooterLinks from './FooterLinks';
 import { htmlLanguage } from '@/lib/locales.mjs';
 import { parseErrorMessage } from '@/lib/ui-copy.mjs';
+import { tikwmResult } from '@/lib/tikwm.mjs';
 
 /* ---------- 工具函数 ---------- */
 
@@ -136,12 +137,26 @@ export default function HomeClient({ locale = 'en' }) {
         body: JSON.stringify({ url: value }),
       });
       const json = await res.json();
-      if (!res.ok || !json.success) {
+      let parsedVideo = res.ok && json.success ? json.video : null;
+      if (json.code === 'TIKTOK_SOURCE_UNAVAILABLE') {
+        try {
+          const upstream = new URL('https://www.tikwm.com/api/');
+          upstream.searchParams.set('url', value);
+          upstream.searchParams.set('hd', '1');
+          const response = await fetch(upstream, {
+            credentials: 'omit', signal: AbortSignal.timeout(8000),
+          });
+          if (response.ok) parsedVideo = tikwmResult(await response.json());
+        } catch {
+          // Keep the original parse error if the alternate network path fails.
+        }
+      }
+      if (!parsedVideo) {
         const message = parseErrorMessage(locale, json.code, res.status, t.hero.stFail, t.hero.stInvalid, json.error);
         setErrMsg(message);
         setPhase('error');
       } else {
-        setVideo(json.video);
+        setVideo(parsedVideo);
         setPhase('success');
         setTimeout(
           () => resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }),
