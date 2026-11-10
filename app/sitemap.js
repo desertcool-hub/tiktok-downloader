@@ -8,9 +8,8 @@ function absoluteAlternates(paths) {
 }
 
 export default function sitemap() {
-  const now = new Date();
   const platforms = ['tiktok', 'x', 'youtube'].flatMap(platform => LOCALES.map(locale => ({
-    url: `${SITE_URL}${platformPath(platform, locale.code)}`, lastModified: now,
+    url: `${SITE_URL}${platformPath(platform, locale.code)}`,
     changeFrequency: platform === 'tiktok' ? 'daily' : 'weekly',
     priority: platform === 'tiktok' ? locale.code === 'en' ? 1 : 0.9 : 0.8,
     alternates: absoluteAlternates(languageAlternates(platform)),
@@ -21,7 +20,7 @@ export default function sitemap() {
     alternates: absoluteAlternates(Object.fromEntries(LOCALES.map(item => [item.language, documentPath(document, item.code)]))),
   })));
   return [...platforms, {
-    url: `${SITE_URL}/weixin`, lastModified: now, changeFrequency: 'weekly', priority: 0.8,
+    url: `${SITE_URL}/weixin`, changeFrequency: 'weekly', priority: 0.8,
     alternates: absoluteAlternates({ 'zh-CN': '/weixin' }),
   }, ...documents];
 }
