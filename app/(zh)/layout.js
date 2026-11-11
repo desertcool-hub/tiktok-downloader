@@ -1,3 +1,4 @@
+import BaiduAnalytics from '@/components/BaiduAnalytics';
 import { Analytics } from '@vercel/analytics/next';
 import { DICT } from '@/lib/i18n';
 import { LOCALES } from '@/lib/locales.mjs';
@@ -56,6 +57,7 @@ export default function ZhRootLayout({ children }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
         />
+        <BaiduAnalytics />
       </body>
     </html>
   );

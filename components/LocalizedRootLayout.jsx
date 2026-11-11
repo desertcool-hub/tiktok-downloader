@@ -1,3 +1,4 @@
+import BaiduAnalytics from '@/components/BaiduAnalytics';
 import { Analytics } from '@vercel/analytics/next';
 import { DICT } from '@/lib/i18n';
 import { LOCALES, htmlLanguage } from '@/lib/locales.mjs';
@@ -20,5 +21,6 @@ export default function LocalizedRootLayout({ children, locale }) {
     inLanguage: LOCALES.map(item => item.language), description: DICT[locale].metaDesc };
   return <html lang={htmlLanguage(locale)}><body>{children}<Analytics />
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd).replace(/</g, '\\u003c') }} />
+    <BaiduAnalytics />
   </body></html>;
 }
