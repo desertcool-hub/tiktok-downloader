@@ -25,3 +25,22 @@ test('relative media redirects are followed with Range preserved', async () => {
   assert.equal(await response.text(), 'video');
   assert.deepEqual(calls, [{ url: 'https://video.twimg.com/a.mp4', range: 'bytes=10-20' }, { url: 'https://video.twimg.com/b.mp4', range: 'bytes=10-20' }]);
 });
+
+test('long X downloads stay open after the response headers arrive', async () => {
+  let upstreamSignal;
+  const response = await fetchPlatformMedia('https://video.twimg.com/a.mp4', 'x', {
+    timeoutMs: 20,
+    timeoutHeadersOnly: true,
+    fetchImpl: async (_url, { signal }) => {
+      upstreamSignal = signal;
+      return new Response(new ReadableStream());
+    },
+  });
+  try {
+    await new Promise(resolve => setTimeout(resolve, 40));
+    assert.equal(upstreamSignal.aborted, false);
+  } finally {
+    await response.body.cancel();
+  }
+  assert.equal(upstreamSignal.aborted, true);
+});

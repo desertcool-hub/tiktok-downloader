@@ -18,7 +18,7 @@ export async function GET(req) {
   const range = req.headers.get('range');
   if (range && !/^bytes=(?:\d+-\d*|-\d+)$/.test(range)) return NextResponse.json({ success: false, error: '下载范围无效' }, { status: 416 });
   try {
-    const response = await fetchPlatformMedia(url, 'x', { range, signal: req.signal,
+    const response = await fetchPlatformMedia(url, 'x', { range, signal: req.signal, timeoutHeadersOnly: !inline,
       headers: { 'User-Agent': 'Mozilla/5.0', Referer: 'https://x.com/' } });
     const type = response.headers.get('content-type') || '';
     const allowedType = inline ? /^image\/(jpeg|png|webp|gif)(?:;|$)/i.test(type) : /^(video\/mp4|application\/octet-stream)(?:;|$)/i.test(type);
