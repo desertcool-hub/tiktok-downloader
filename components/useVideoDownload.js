@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { fetchXDownload } from './x-download-ranges.mjs';
 
 export function saveVideoBlob(blob, name) {
   const url = URL.createObjectURL(blob);
@@ -16,7 +17,7 @@ export function videoFilename(video, index = 0) {
   return `${base || 'video'}.mp4`;
 }
 
-export default function useVideoDownload({ maxBytes = 256 * 1024 * 1024 } = {}) {
+export default function useVideoDownload({ maxBytes = 256 * 1024 * 1024, useRanges = false } = {}) {
   const [state, setState] = useState({ phase: 'idle', bytes: 0, total: 0, error: '' });
   const controller = useRef(null);
   useEffect(() => () => controller.current?.abort(), []);
@@ -35,13 +36,14 @@ export default function useVideoDownload({ maxBytes = 256 * 1024 * 1024 } = {}) 
         writer = await handle.createWritable();
       }
       if (abort.signal.aborted) throw new DOMException('Canceled', 'AbortError');
-      const response = await fetch(url, { ...options, signal: abort.signal });
+      const request = useRanges ? fetchXDownload : fetch;
+      const response = await request(url, { ...options, signal: abort.signal });
       if (!response.ok) {
         const json = await response.json().catch(() => null);
         throw Object.assign(new Error(json?.error || '下载失败，请重新获取链接后重试'), { code: json?.code, status: response.status });
       }
       if (!response.headers.get('content-type')?.includes('video/mp4') || !response.body) throw Object.assign(new Error('下载源没有返回 MP4 视频'), { code: 'INVALID_MEDIA' });
-      const total = Number(response.headers.get('content-length') || 0);
+      const total = Number(response.headers.get('x-video-content-length') || response.headers.get('content-length') || 0);
       const bufferLimit = maxBytes;
       if ((!writer || maxBytes < 256 * 1024 * 1024) && total > bufferLimit) {
         abort.abort();
@@ -58,9 +60,13 @@ export default function useVideoDownload({ maxBytes = 256 * 1024 * 1024 } = {}) 
         if (writer) await writer.write(value); else chunks.push(value);
         setState({ phase: 'loading', bytes, total, error: '' });
       }
+      if (total > 0 && bytes !== total) {
+        throw new Error('视频传输不完整，请重试或选择较低清晰度');
+      }
       if (writer) await writer.close(); else saveVideoBlob(new Blob(chunks, { type: 'video/mp4' }), name);
       setState({ phase: 'done', bytes, total, error: '' });
     } catch (e) {
+      abort.abort();
       if (writer) await writer.abort().catch(() => {});
       setState({ phase: e.name === 'AbortError' ? 'idle' : 'error', bytes: 0, total: 0,
         error: e.name === 'AbortError' ? '' : e.message || '下载失败，请重试', errorCode: e.code, errorStatus: e.status });

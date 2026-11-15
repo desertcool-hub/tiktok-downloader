@@ -17,7 +17,7 @@ export default function XVideoResult({ video, index, t, locale, platform = 'x' }
   const copyTimer = useRef(null);
   useEffect(() => () => clearTimeout(copyTimer.current), []);
   const youtube = platform === 'youtube';
-  const { state, download, cancel } = useVideoDownload(youtube ? { maxBytes: 4 * 1024 * 1024 } : undefined);
+  const { state, download, cancel } = useVideoDownload(youtube ? { maxBytes: 4 * 1024 * 1024 } : { useRanges: true });
   const busy = state.phase === 'loading';
   const name = videoFilename(video, index);
   const cover = youtube ? youtubeCoverUrl(video.cover) : video.cover ? `/api/xdownload?u=${encodeURIComponent(video.cover)}&inline=1` : null;
