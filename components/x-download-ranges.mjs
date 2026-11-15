@@ -1,4 +1,5 @@
 const SEGMENT_SIZE = 4 * 1024 * 1024;
+const MIN_SEGMENT_SIZE = 256 * 1024;
 
 export async function fetchXDownload(url, options, { fetchImpl = fetch, segmentSize = SEGMENT_SIZE } = {}) {
   const { signal } = options;
@@ -35,7 +36,18 @@ export async function fetchXDownload(url, options, { fetchImpl = fetch, segmentS
   const body = new ReadableStream({
     async pull(controller) {
       const end = Math.min(offset + segmentSize, total) - 1;
-      const segment = total === 1 ? bytes : (await readRange(offset, end, total)).bytes;
+      let segment;
+      let nextEnd = end;
+      while (!segment) {
+        try {
+          segment = total === 1 ? bytes : (await readRange(offset, nextEnd, total)).bytes;
+        } catch (error) {
+          const length = nextEnd - offset + 1;
+          if (signal?.aborted || length <= MIN_SEGMENT_SIZE ||
+              (error.status >= 400 && error.status < 500)) throw error;
+          nextEnd = offset + Math.max(MIN_SEGMENT_SIZE, Math.floor(length / 2)) - 1;
+        }
+      }
       controller.enqueue(segment);
       offset += segment.length;
       if (offset === total) controller.close();
