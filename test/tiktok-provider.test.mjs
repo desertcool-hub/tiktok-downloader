@@ -6,7 +6,7 @@ const post = 'https://www.tiktok.com/@example/video/123456';
 const media = 'https://v16.tiktokcdn-us.com/video.mp4';
 
 test('page fallback only returns a video when the download source accepts a range request', async (t) => {
-  const itemStruct = { id: '123456', video: { downloadAddr: media } };
+  const itemStruct = { id: '123456', video: { downloadAddr: 'https://v16.tiktokcdn-us.com/watermarked.mp4', playAddr: media } };
   const data = { __DEFAULT_SCOPE__: { 'webapp.video-detail': { itemInfo: { itemStruct } } } };
   let status = 403;
   t.mock.method(globalThis, 'fetch', async (url, options) => {
@@ -26,4 +26,15 @@ test('page fallback only returns a video when the download source accepts a rang
   status = 206;
   const available = await parseTikTok(post);
   assert.equal(available.result.formats[0].url, media);
+});
+
+test('page fallback rejects posts that only expose a watermarked download address', async (t) => {
+  const itemStruct = { id: '123456', video: { downloadAddr: media } };
+  const data = { __DEFAULT_SCOPE__: { 'webapp.video-detail': { itemInfo: { itemStruct } } } };
+  t.mock.method(globalThis, 'fetch', async (url) => {
+    if (String(url).startsWith('https://www.tikwm.com/')) return new Response(null, { status: 403 });
+    assert.equal(url, post);
+    return new Response(`<script id="__UNIVERSAL_DATA_FOR_REHYDRATION__">${JSON.stringify(data)}</script>`);
+  });
+  assert.equal((await parseTikTok(post)).result, null);
 });
